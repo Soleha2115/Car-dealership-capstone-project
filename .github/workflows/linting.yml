@@ -1,0 +1,35 @@
+name: CI/CD Pipeline
+
+on: [push, pull_request]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Check Django configuration and tests
+        run: |
+          python manage.py check
+          python manage.py test server.djangoapp.tests
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Check services and build frontend
+        run: |
+          node --check server/database/app.js
+          cd server/frontend
+          npm ci
+          npm run build

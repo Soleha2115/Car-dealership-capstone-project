@@ -1,0 +1,8 @@
+.git
+djangoenv
+node_modules
+server/frontend/node_modules
+server/frontend/dist
+__pycache__
+*.py[cod]
+db.sqlite3

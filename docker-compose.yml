@@ -1,0 +1,43 @@
+services:
+  django:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DJANGO_DEBUG: "false"
+      DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1"
+      NODE_SERVICE_URL: http://node_service:3000
+      DJANGO_DB_PATH: /data/db.sqlite3
+    volumes:
+      - django_data:/data
+    depends_on:
+      node_service:
+        condition: service_started
+  node_service:
+    build: ./server/database
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/dealership
+    ports:
+      - "3000:3000"
+    depends_on:
+      mongo:
+        condition: service_healthy
+  mongo:
+    image: mongo:6
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+  sentiment:
+    build: ./server/djangoapp/microservices
+    ports:
+      - "5000:5000"
+
+volumes:
+  django_data:
+  mongo_data:

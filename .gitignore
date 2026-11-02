@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+djangoenv/
+venv/
+node_modules/
+server/frontend/node_modules/
+server/frontend/dist/
+staticfiles/
+db.sqlite3
+cookies.txt
+.env
+.DS_Store
